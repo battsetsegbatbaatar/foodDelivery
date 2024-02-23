@@ -1,12 +1,20 @@
 import React from "react";
 
-export const Delivery = (svg: string, service: string, description: string) => {
+type Delivery = {
+  url: string;
+  service: string;
+  description: string;
+};
+
+export const Delivery = ({ url, service, description }, { Delivery }) => {
   return (
-    <div className="card w-96 bg-base-100 shadow-xl">
+    <div className="card bg-base-100 shadow-2xl p-5 rounded-2xl hover:focus">
       <div className="card-body">
-        {svg}
-        <h1>{service}</h1>
-        <p>{description}</p>
+        <img className="p-4" src={url} alt="" />
+        <div className="flex pt-4 flex-col gap-2">
+          <h1 className=" font-bold">{service}</h1>
+          <p className="text-sm text-[#272727]">{description}</p>
+        </div>
       </div>
     </div>
   );

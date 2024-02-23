@@ -42,7 +42,7 @@ export const Header = () => {
         </div>
         <div className="flex gap-2 px-4 py-2 cursor-pointe items-center hover:text-[#18BA51]">
           <AccountIcon />
-          <h5>Нэвтрэх</h5>
+          <a href="./SignIn">Нэвтрэх</a>
         </div>
       </div>
     </header>
