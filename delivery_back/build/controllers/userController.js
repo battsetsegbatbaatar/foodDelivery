@@ -17,13 +17,14 @@ const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.getUser = getUser;
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, email, password } = req.body;
     const user = yield userModel_1.userModel.create({
-        name: "Battsetseg",
-        email: "bg@gmail.com",
-        password: "1234",
-        phoneNumber: 80836369,
-        role: "admin",
+        name: name,
+        email: email,
+        password: password,
+        phoneNumber: 1234,
     });
+    console.log(user);
     res.send(user);
 });
 exports.createUser = createUser;

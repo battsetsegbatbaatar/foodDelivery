@@ -11,7 +11,7 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSignIn = (e:any) => {
+  const handleSignIn = (e: any) => {
     e.preventDefault();
 
     if (email === "bg@gmail.com" && password === "1234") {
@@ -25,9 +25,12 @@ export default function Home() {
   return (
     <>
       <Header loggedIn={loggedIn} />
-      
+
       <main className="w-full flex justify-center px-[150px]  py-[168px]">
-        <form onSubmit={handleSignIn} className="w-[400px] flex flex-col justify-center items-center p-[32px] gap-12">
+        <form
+          onSubmit={handleSignIn}
+          className="w-[400px] flex flex-col justify-center items-center p-[32px] gap-12"
+        >
           <h5 className="text-3xl font-bold">Нэвтрэх</h5>
           {error && <p className="text-red-500">{error}</p>}
           <div className="flex flex-col gap-2 w-[90%] justify-center">
@@ -55,16 +58,25 @@ export default function Home() {
                 className="input input-bordered w-full border py-2 px-4 rounded bg-[#F7F7F8]"
               />
               <div className="label flex justify-end">
-                <a href="./ForgotPass" className="label-text-alt">Нууц үг сэргээх</a>
+                <a href="./ForgotPass" className="label-text-alt">
+                  Нууц үг сэргээх
+                </a>
               </div>
             </label>
           </div>
           <div className="flex flex-col w-[340px] items-center justify-center gap-[32px]">
-            <a href="./" type="submit" className="btn py-2 px-4 w-[90%] justify-center  rounded text-white bg-[#18BA51] focus:bg-[#EEEFF2]">
+            <a
+              href="./"
+              type="submit"
+              className="btn py-2 px-4 w-[90%] justify-center  rounded text-white bg-[#18BA51] focus:bg-[#EEEFF2]"
+            >
               Нэвтрэх
             </a>
             <p>Эсвэл</p>
-            <a href="./SignUp" className="btn w-[90%] align-center py-2 px-4  rounded border border-[#18BA51] focus:bg-[#EEEFF2]">
+            <a
+              href="./SignUp"
+              className="btn w-[90%] align-center py-2 px-4  rounded border border-[#18BA51] focus:bg-[#EEEFF2]"
+            >
               Бүртгүүлэх
             </a>
           </div>

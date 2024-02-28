@@ -1,12 +1,16 @@
 import express from "express";
-import { userRouter } from "./routes/userRoutes";
+import { router } from "./routes/userRoutes";
 import { connectToDb } from "./connectToDb";
+import cors from "cors";
 
 const app = express();
 const PORT = 8080;
 
 connectToDb();
-app.use(userRouter);
+
+app.use(cors());
+app.use(express.json());
+app.use(router);
 
 app.get("/", (req: express.Request, res: express.Response) => {
   res.send("Hello world!");

@@ -11,8 +11,4 @@ exports.userModel = mongoose_1.default.model("user", new Schema({
     email: String,
     password: String,
     phoneNumber: Number,
-    role: {
-        type: String,
-        enum: ["admin", "customer"],
-    },
 }));
