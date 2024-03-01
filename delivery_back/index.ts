@@ -10,7 +10,7 @@ connectToDb();
 
 app.use(cors());
 app.use(express.json());
-app.use(router);
+app.use("/user", router);
 
 app.get("/", (req: express.Request, res: express.Response) => {
   res.send("Hello world!");

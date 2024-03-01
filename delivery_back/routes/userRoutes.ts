@@ -1,9 +1,8 @@
 import { Router } from "express";
-import { singIn, singUp } from "../controllers/userController";
+import { singIn, singUp, getUser } from "../controllers/userController";
 
-const router = Router();
+export const router = Router();
 
-router.route("/singup").post(singUp);
-router.route("/signin").post(singIn);
-
-export { router };
+router.route("/users").get(getUser);
+router.route("/signUp").post(singUp);
+router.route("/signIn").post(singIn);

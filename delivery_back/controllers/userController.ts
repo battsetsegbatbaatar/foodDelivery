@@ -19,6 +19,7 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const singUp = async (req: Request, res: Response) => {
   const { name, email, password, phoneNumber } = req.body;
+  console.log(req.body);
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -63,7 +64,7 @@ export const singIn = async (req: Request, res: Response) => {
       .cookie("refreshToken", refreshToken)
       .header({ Authorization: accessToken })
       .send(user);
-    res.status(200).json({ message: "Success enter", accessToken });
+    // res.status(200).json({ message: "Success enter" });
   } catch (error) {
     console.error(error);
     res.status(400).json({ message: "Failed" });

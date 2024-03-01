@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CheckIcon } from "@/components/icon/CheckIcon";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const BASE_URL = "http://localhost:8080";
 
@@ -28,6 +30,34 @@ export default function Home() {
     }));
   };
 
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+      phoneNumber: "",
+    },
+    validationSchema: Yup.object({
+      name: Yup.string()
+        .max(20, "Must be 20 characters or less")
+        .required("Required"),
+      email: Yup.string().email("Invalid email address").required("Required"),
+      password: Yup.string()
+        .matches(passwordRules, {
+          message: "Please create a stronger password",
+        })
+        .min(8, "Must be 8 characters or lot")
+        .max(20, "Must be 20 characters or less")
+        .required("Required"),
+      repassword: Yup.string()
+        .oneOf([Yup.ref("password")], "Passwords must match")
+        .required("Required"),
+    }),
+    onSubmit: (values) => {
+      alert(JSON.stringify(values, null, 2));
+    },
+  });
+
   const clearForm = () => {
     setFormData({
       name: "",
@@ -39,14 +69,17 @@ export default function Home() {
   };
 
   const createUser = async (e: any) => {
-    e.preventDefault();
+    console.log(formData);
     setError("");
+    console.log("first");
     try {
       if (formData.password !== formData.repassword) {
         setError("Passwords do not match");
         return;
       }
-      const response = await axios.post(BASE_URL + "/signup", formData);
+      console.log("second");
+      const response = await axios.post(BASE_URL + "/user/signUp", formData);
+      console.log("done");
       setVisible(true);
       clearForm();
       router.push("/SignIn");
@@ -77,7 +110,7 @@ export default function Home() {
       )}
       <main className="w-full grid justify-center px-[150px]  py-[168px]">
         <form
-          onSubmit={createUser}
+          onSubmit={formik.handleSubmit}
           className="w-[400px] flex flex-col justify-center items-center p-[32px] gap-12"
         >
           <h5 className="text-3xl font-bold">Бүртгүүлэх</h5>
@@ -90,6 +123,9 @@ export default function Home() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.firstName}
                 type="text"
                 placeholder="Нэрээ оруулна уу"
                 className="input input-bordered w-full border py-2 px-4 rounded bg-[#F7F7F8]"
@@ -149,16 +185,22 @@ export default function Home() {
             </label>
           </div>
           {error && <p className="text-red-500">{error}</p>}
-          <div className="flex flex-start gap-2 ">
+          <div className="flex gap-2 ">
             <input type="checkbox" className="checkbox" />
-            <a href="" className="text-sm cursor-pointer hover:underline">
+            <a
+              href=""
+              className="text-sm items-start cursor-pointer hover:underline"
+            >
               Үйлчилгээний нөхцөл зөвшөөрөх
             </a>
           </div>
           <a
-            onClick={handleClick}
+            onClick={() => {
+              handleClick();
+              createUser();
+            }}
             type="submit"
-            className="btn py-2 px-4 w-[90%] justify-center  rounded text-white bg-[#18BA51] focus:bg-[#EEEFF2]"
+            className="btn py-2 px-4 w-[90%] justify-center text-center rounded text-white bg-[#18BA51] focus:bg-[#EEEFF2]"
           >
             Бүртгүүлэх
           </a>

@@ -4,20 +4,49 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CheckIcon } from "@/components/icon/CheckIcon";
 import { useState } from "react";
+import { useRouter } from "next/router";
+import axios from "axios";
+
+const BASE_URL = "http://localhost:8080";
 
 export default function Home() {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
   const [error, setError] = useState("");
+  const router = useRouter();
+  console.log(formData);
 
-  const handleSignIn = (e: any) => {
+  const handleChange = (e: any) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const clearForm = () => {
+    setFormData({
+      email: "",
+      password: "",
+    });
+  };
+
+  const SignIn = async (e: any) => {
     e.preventDefault();
+    console.log(formData);
+    try {
+      await axios.post(BASE_URL + "/user/signin", formData);
 
-    if (email === "bg@gmail.com" && password === "1234") {
-      setLoggedIn(true);
-      setError("");
-    } else {
+      router.push("/");
+      clearForm();
+      alert("Success enter");
+    } catch (error) {
+      console.log(error);
+      alert({ message: "Not enter" });
+      router.push("/#");
       setError("И-мэйл эсвэл нууц үгээ оруулна уу");
     }
   };
@@ -28,7 +57,7 @@ export default function Home() {
 
       <main className="w-full flex justify-center px-[150px]  py-[168px]">
         <form
-          onSubmit={handleSignIn}
+          onSubmit={handleChange}
           className="w-[400px] flex flex-col justify-center items-center p-[32px] gap-12"
         >
           <h5 className="text-3xl font-bold">Нэвтрэх</h5>
@@ -40,8 +69,9 @@ export default function Home() {
               </div>
               <input
                 type="text"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="Имэйл хаягаа оруулна уу"
                 className="input input-bordered w-full border py-2 px-4 rounded bg-[#F7F7F8]"
               />
@@ -52,8 +82,9 @@ export default function Home() {
               </div>
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
                 placeholder="Нууц үг"
                 className="input input-bordered w-full border py-2 px-4 rounded bg-[#F7F7F8]"
               />
@@ -66,16 +97,16 @@ export default function Home() {
           </div>
           <div className="flex flex-col w-[340px] items-center justify-center gap-[32px]">
             <a
-              href="./"
+              onClick={SignIn}
               type="submit"
-              className="btn py-2 px-4 w-[90%] justify-center  rounded text-white bg-[#18BA51] focus:bg-[#EEEFF2]"
+              className="btn py-2 px-4 w-[90%] text-center rounded text-white bg-[#18BA51] focus:bg-[#EEEFF2]"
             >
               Нэвтрэх
             </a>
             <p>Эсвэл</p>
             <a
-              href="./SignUp"
-              className="btn w-[90%] align-center py-2 px-4  rounded border border-[#18BA51] focus:bg-[#EEEFF2]"
+              href="/SignUp"
+              className="btn w-[90%] align-center py-2 px-4 text-center  rounded border border-[#18BA51] focus:bg-[#EEEFF2]"
             >
               Бүртгүүлэх
             </a>
