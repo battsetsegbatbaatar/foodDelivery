@@ -122,7 +122,6 @@ export default function Home() {
               <input
                 name="name"
                 value={formData.name}
-                onChange={handleChange}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.firstName}
