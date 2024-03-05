@@ -47,6 +47,7 @@ export default function Home() {
             />
           ))}
         </div>
+        <a href="/Profile">Pro</a>
         <div className="flex flex-col gap-6">
           {name.map((name) => (
             <CategoryCard name={name} />
