@@ -19,7 +19,6 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const singUp = async (req: Request, res: Response) => {
   const { name, email, password, phoneNumber } = req.body;
-  console.log(req.body);
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
