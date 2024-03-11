@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@types/nodemailer": "^6.4.14",
+    "@vercel/remix": "^2.8.1",
     "axios": "^1.6.7",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.0.2",

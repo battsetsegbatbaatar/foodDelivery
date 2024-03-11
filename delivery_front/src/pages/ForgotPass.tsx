@@ -2,17 +2,14 @@ import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import axios from "axios";
+import { Router } from "express";
 
 export default function Home() {
-  const [visible, setVisible] = useState(1);
-  const [mail, setMail] = useState("");
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    verificationCode: "",
-  });
-  const [code, setCode] = useState("");
+  const [step, setStep] = useState(1);
+  const [email, setEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: any) => {
@@ -20,51 +17,54 @@ export default function Home() {
     setError("");
 
     try {
-      if (visible === 1) {
-        await forgetPass();
-      } else if (visible === 2) {
-        await rePass();
+      if (step === 1) {
+        await sendVerificationCode();
+      } else if (step === 2) {
+        await verifyCodeAndResetPassword();
+      } else if (step === 3) {
+        await newPass();
       }
     } catch (error) {
-      setError("Error: " + { message: "Error" });
+      setError("not");
     }
   };
 
-  const forgetPass = async () => {
+  const sendVerificationCode = async () => {
     try {
-      const { email } = formData;
       await axios.post("http://localhost:8080/user/forgetPass", { email });
-      setVisible(2);
+      setStep(2);
+    } catch (error) {
+      console.error("Error sending verification code:", error);
+      throw error;
+    }
+  };
+
+  const verifyCodeAndResetPassword = async () => {
+    try {
+      await axios.post("http://localhost:8080/user/resetPassword", {
+        email,
+        verificationCode,
+      });
+      setStep(3);
     } catch (error) {
       console.error("Error resetting password:", error);
-    }
-  };
-  const rePass = async () => {
-    try {
-      const { email } = formData;
-      await axios.post("http://localhost:8080/user/forgetPass", {
-        email,
-        code,
-      });
-      setVisible(3);
-    } catch (error) {
-      console.error("Error initiating password reset:", error);
+      throw error;
     }
   };
 
-  const handleChange = (e: any) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const newPass = async () => {
+    try {
+      await axios.post("/newPass", { newPassword, confirmPassword });
+    } catch (error) {
+      console.error({ message: "not new pass" });
+    }
   };
 
   return (
     <>
       <Header />
       {error && <p className="text-red-500">{error}</p>}
-      {visible === 1 && (
+      {step === 1 && (
         <main className="w-full flex justify-center px-[150px]  py-[168px]">
           <form
             onSubmit={handleSubmit}
@@ -77,17 +77,16 @@ export default function Home() {
                   <span className="label-text text-sm">Имэйл </span>
                 </div>
                 <input
-                  onChange={(e) => {
-                    setMail(e.target.value);
-                  }}
-                  type="text"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Имэйл хаягаа оруулна уу"
                   className="input input-bordered w-full border py-2 px-4 rounded bg-[#F7F7F8]"
                 />
               </label>
             </div>
             <button
-              onClick={forgetPass}
+              type="submit"
               className="btn py-2 px-4 w-[90%] justify-center  rounded text-white bg-[#18BA51] focus:bg-[#EEEFF2]"
             >
               Үргэлжлүүлэх
@@ -95,7 +94,7 @@ export default function Home() {
           </form>
         </main>
       )}
-      {visible === 2 && (
+      {step === 2 && (
         <main className="w-full flex justify-center px-[150px]  py-[168px]">
           <form
             onSubmit={handleSubmit}
@@ -104,7 +103,7 @@ export default function Home() {
             <h5 className="text-3xl font-bold">Нууц үг сэргээх</h5>
             <div className="flex text-sm justify-start text-[#695C08]">
               <span>Таны </span>&nbsp;
-              <p className="text-[#18BA51]">{mail}</p>&nbsp;
+              <p className="text-[#18BA51]">{email}</p>&nbsp;
               <span> хаяг руу сэргээх код илгээх болно.</span>
             </div>
             <div className="flex flex-col gap-2 w-[90%] justify-center">
@@ -115,17 +114,15 @@ export default function Home() {
                   </span>
                 </div>
                 <input
-                  onClick={(e) => {
-                    setCode(e.target.value);
-                  }}
                   type="text"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
                   placeholder="****"
                   className="input input-bordered w-full border py-2 px-4 rounded bg-[#F7F7F8]"
                 />
               </label>
             </div>
             <button
-              onClick={rePass}
               type="submit"
               className="btn py-2 px-4 w-[90%] justify-center  rounded text-white bg-[#18BA51] focus:bg-[#EEEFF2]"
             >
@@ -134,7 +131,7 @@ export default function Home() {
           </form>
         </main>
       )}
-      {visible === 3 && (
+      {step === 3 && (
         <main className="w-full flex justify-center px-[150px]  py-[168px]">
           <form
             onSubmit={handleSubmit}
@@ -147,7 +144,9 @@ export default function Home() {
                   <span className="label-text text-sm">Нууц үг </span>
                 </div>
                 <input
-                  type="text"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
                   placeholder=""
                   className="input input-bordered w-full border py-2 px-4 rounded bg-[#F7F7F8]"
                 />
@@ -157,14 +156,16 @@ export default function Home() {
                   <span className="label-text text-sm">Нууц үг давтах </span>
                 </div>
                 <input
-                  type="text"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder=""
                   className="input input-bordered w-full border py-2 px-4 rounded bg-[#F7F7F8]"
                 />
               </label>
             </div>
             <a
-              href="./SignIn"
+              type="submit"
               className="btn py-2 px-4 w-[90%] justify-center  rounded text-white bg-[#18BA51] focus:bg-[#EEEFF2]"
             >
               Үргэлжлүүлэх

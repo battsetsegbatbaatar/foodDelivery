@@ -43,6 +43,7 @@ export default function Home() {
       router.push("/");
       clearForm();
       alert("Success enter");
+      setLoggedIn(true);
     } catch (error) {
       console.log(error);
       alert({ message: "Not enter" });
