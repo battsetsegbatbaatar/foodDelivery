@@ -5,7 +5,6 @@ import upload from "./middleware/multer";
 import cloudinary from "./utils/cloudinary";
 import { Image } from "./models/image";
 import cors from "cors";
-import { vercelPreset } from "@vercel/remix";
 
 const app = express();
 const PORT = 8080;
@@ -48,7 +47,6 @@ app.post(
 app.get("/", (req: express.Request, res: express.Response) => {
   res.send("Express on Vercel");
 });
-
 app.listen(PORT, () => {
   console.log("application running at: http://localhost:" + PORT);
 });

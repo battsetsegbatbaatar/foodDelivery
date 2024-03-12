@@ -2,6 +2,11 @@ import * as nodemailer from "nodemailer";
 import { Request, Response } from "express";
 import { userModel } from "../models/userModel";
 
+const verify: { key?: number | string; email?: string } = {
+  key: "",
+  email: "",
+};
+
 export const forgetPass = async (req: Request, res: Response) => {
   const { email } = req.body;
   console.log(email);
@@ -28,22 +33,24 @@ export const forgetPass = async (req: Request, res: Response) => {
     });
 
     console.log("Message sent: %s", info.messageId);
-    res.status(200).json({ message: "Email sent successfully" });
+    res
+      .status(200)
+      .json({ message: "Email sent successfully", verificationCode });
   } catch (error) {
     console.error("Error occurred:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-export const verifyPass = async (req: Request, res: Response) => {
-  const { email, verificationCode } = req.body;
+export const verifyCode = async (req: Request, res: Response) => {
+  const { email, code } = req.body;
+  console.log(email, code);
+  console.log(verify);
   try {
-    const user = await userModel.findOne({ email });
-    if (!user) {
+    if (email !== verify.email) {
       return res.status(400).json({ message: "User not found" });
     }
-
-    if (user.verificationCode !== verificationCode) {
+    if (code !== verify.key) {
       return res.status(400).json({ message: "Invalid verification code" });
     }
 

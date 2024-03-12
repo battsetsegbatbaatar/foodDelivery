@@ -54,7 +54,10 @@ export default function Home() {
 
   const newPass = async () => {
     try {
-      await axios.post("/newPass", { newPassword, confirmPassword });
+      await axios.post("http://localhost:8080/user/newPass", {
+        newPassword,
+        confirmPassword,
+      });
     } catch (error) {
       console.error({ message: "not new pass" });
     }
