@@ -69,3 +69,32 @@ export const singIn = async (req: Request, res: Response) => {
     res.status(400).json({ message: "Failed" });
   }
 };
+
+export const userRef = async (req: Request, res: Response) => {
+  const { email } = req.body;
+  try {
+    const users = await userModel.find({ email });
+    res.send(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to get users" });
+  }
+};
+
+export const userUpdate = async (req: Request, res: Response) => {
+  const { email, name, phoneNumber } = req.body;
+  try {
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    user.name = name;
+    user.phoneNumber = phoneNumber;
+    await user.save();
+
+    res.status(200).json({ message: "User updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to update user" });
+  }
+};

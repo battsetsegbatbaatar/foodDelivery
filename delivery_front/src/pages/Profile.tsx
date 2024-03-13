@@ -9,29 +9,39 @@ import { PhoneIcon } from "@/components/icon/PhoneIcon";
 import { MailIcon } from "../components/icon/MailIcon";
 import { TimeIcon } from "../components/icon/TimeIcon";
 import { OutIcon } from "@/components/icon/OutIcon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
 
 const pro = [
-  { category: "Таны нэр", icon: <AccountIcon />, input: "УгтахБаяр" },
-  { category: "Утасны дугаар", icon: <PhoneIcon />, input: "УгтахБаяр" },
-  { category: "Имэйл хаяг", icon: <MailIcon />, input: "УгтахБаяр" },
+  { category: "Таны нэр", icon: <AccountIcon /> },
+  { category: "Утасны дугаар", icon: <PhoneIcon /> },
+  { category: "Имэйл хаяг", icon: <MailIcon /> },
 ];
 
 export default function Home() {
   const [imageUrl, setImageUrl] = useState("");
+  const [userData, setUserData] = useState(null);
 
-  const fetchData = async () => {};
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/user/user");
+      setUserData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  console.log(userData);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const formData = new FormData();
-    const target = e.target;
-    const selectedFile = target?.files as FileList;
-    formData.append("image", selectedFile[0]);
-    console.log(formData, target);
-    console.log(imageUrl);
+    const selectedFile = e.target.files[0];
+    formData.append("image", selectedFile);
 
     try {
       const res = await axios.post("http://localhost:8080/upload", formData);
@@ -74,7 +84,9 @@ export default function Home() {
                 </div>
                 <div>
                   <p className="text-xs text-[#888A99]">{pro.category}</p>
-                  <p>{pro.input}</p>
+                  {userData.map((proItem) => {
+                    <p>{userData[proItem.category]}</p>;
+                  })}
                 </div>
               </div>
               <EditIcon />
