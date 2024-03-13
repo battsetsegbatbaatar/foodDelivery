@@ -11,46 +11,35 @@ export const FoodCard: React.FC<FoodCardProps> = ({
   foodName,
   foodPrice,
 }) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const toggleDialog = () => {
-    setIsDialogOpen(!isDialogOpen);
+  const createModal = () => {
+    const dialog = document.getElementById("open");
+    if (dialog) {
+      (dialog as HTMLDialogElement).showModal();
+    }
   };
 
   return (
     <div className="flex flex-col gap-4 ">
       <img
-        onClick={toggleDialog}
+        onClick={createModal}
         className="w-[350px] h-[220px] rounded-md cursor-pointer"
         src={foodImg}
         alt=""
       />
       <div className="flex flex-col gap-[2px]">
-        <h5 className="font-bold text-base font-semibold">{foodName}</h5>
+        <h5 className="font-bold text-base">{foodName}</h5>
         <p className="text-[#18BA51] text-base font-semibold">{foodPrice}₮</p>
       </div>
-      {isDialogOpen && <Dialog onClose={toggleDialog} />}
     </div>
   );
 };
 
-type DialogProps = {
-  onClose: () => void;
-};
-
-export const Dialog: React.FC<DialogProps> = ({ onClose }) => {
-  const handleClose = () => {
-    onClose();
-  };
-
+export const Dialog = () => {
   return (
-    <dialog className="modal modal-overlay">
+    <dialog id="open" className="modal">
       <div className="modal-box">
         <form method="dialog">
-          <button
-            onClick={handleClose}
-            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-          >
+          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
             ✕
           </button>
         </form>

@@ -25,8 +25,8 @@ const foodData = [
     foodPrice: "14,800",
   },
 ];
-type name = { name: string };
-export const CategoryCard = ({ name }) => {
+type nameProp = { name: string };
+export const CategoryCard: React.FC<nameProp> = ({ name }) => {
   return (
     <div className="flex flex-col gap-6 px-[150px]">
       <div className="flex justify-between">

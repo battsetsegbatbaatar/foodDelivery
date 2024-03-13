@@ -1,12 +1,16 @@
 import React from "react";
 
-type Delivery = {
-  url: string;
+type DeliveryProps = {
+  url: string | undefined;
   service: string;
   description: string;
 };
 
-export const Delivery = ({ url, service, description }, { Delivery }) => {
+export const Delivery: React.FC<DeliveryProps> = ({
+  url,
+  service,
+  description,
+}) => {
   return (
     <div className="card bg-base-100 shadow-2xl p-5 rounded-2xl hover:focus">
       <div className="card-body">

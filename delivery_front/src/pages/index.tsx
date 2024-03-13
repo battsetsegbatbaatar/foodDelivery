@@ -19,7 +19,7 @@ const deliveryData = [
     description: "Захиалга бэлтгэлийн явцыг хянах",
   },
   {
-    url: "cook.png",
+    url: "./cook.png",
     service: "Эрүүл, баталгаат орц",
     description: "Захиалга бэлтгэлийн явцыг хянах",
   },
@@ -35,7 +35,7 @@ const name = ["Хямдралтай", "Үндсэн хоол", "Салад ба 
 export default function Home() {
   return (
     <>
-      <Header />
+      <Header loggedIn={null} />
       <img src="/FoodDelivery.png" alt="" className=" w-full" />
       <main>
         <div className="flex gap-[47px] py-[90px] px-[120px] justify-center">

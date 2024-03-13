@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import axios from "axios";
-import { Router } from "express";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 export default function Home() {
   const [step, setStep] = useState(1);
@@ -12,24 +13,43 @@ export default function Home() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    setError("");
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email("И-мэйл хаяг буруу байна.")
+        .required("Required"),
+      password: Yup.string()
+        .required("Required")
+        .min(8, "Password must be at least 8 characters")
+        .max(20, "Password must not exceed 20 characters")
+        .required("Required"),
+      confirmPassword: Yup.string()
+        .oneOf([Yup.ref("password")], "Passwords must match")
+        .required("Required"),
+    }),
+    onSubmit: async (values, actions) => {
+      setError("");
 
-    try {
-      if (step === 1) {
-        await sendVerificationCode();
-      } else if (step === 2) {
-        await verifyCodeAndResetPassword();
-      } else if (step === 3) {
-        await newPass();
+      try {
+        if (step === 1) {
+          await sendVerificationCode(values.email);
+        } else if (step === 2) {
+          await verifyCodeAndResetPassword();
+        } else if (step === 3) {
+          await newPass();
+        }
+      } catch (error) {
+        setError("An error occurred.");
       }
-    } catch (error) {
-      setError("not");
-    }
-  };
+    },
+  });
 
-  const sendVerificationCode = async () => {
+  const sendVerificationCode = async (email: String) => {
     try {
       await axios.post("http://localhost:8080/user/forgetPass", { email });
       setStep(2);
@@ -41,9 +61,8 @@ export default function Home() {
 
   const verifyCodeAndResetPassword = async () => {
     try {
-      await axios.post("http://localhost:8080/user/resetPassword", {
-        email,
-        verificationCode,
+      await axios.post("http://localhost:8080/user/verifyCode", {
+        otpMap: { email: email.toString(), code: Number(verificationCode) },
       });
       setStep(3);
     } catch (error) {
@@ -62,15 +81,13 @@ export default function Home() {
       console.error({ message: "not new pass" });
     }
   };
-
   return (
     <>
-      <Header />
-      {error && <p className="text-red-500">{error}</p>}
+      <Header loggedIn={null} />
       {step === 1 && (
         <main className="w-full flex justify-center px-[150px]  py-[168px]">
           <form
-            onSubmit={handleSubmit}
+            onSubmit={formik.handleSubmit}
             className="w-[400px] flex flex-col justify-center items-center p-[32px] gap-12"
           >
             <h5 className="text-3xl font-bold">Нууц үг сэргээх</h5>
@@ -81,11 +98,16 @@ export default function Home() {
                 </div>
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  name="email"
                   placeholder="Имэйл хаягаа оруулна уу"
                   className="input input-bordered w-full border py-2 px-4 rounded bg-[#F7F7F8]"
                 />
+                {formik.touched.email && formik.errors.email && (
+                  <div className="text-red-500">{formik.errors.email}</div>
+                )}
               </label>
             </div>
             <button
@@ -100,7 +122,7 @@ export default function Home() {
       {step === 2 && (
         <main className="w-full flex justify-center px-[150px]  py-[168px]">
           <form
-            onSubmit={handleSubmit}
+            onSubmit={verifyCodeAndResetPassword}
             className="w-[400px] flex flex-col justify-center items-center p-[32px] gap-12"
           >
             <h5 className="text-3xl font-bold">Нууц үг сэргээх</h5>
@@ -137,7 +159,7 @@ export default function Home() {
       {step === 3 && (
         <main className="w-full flex justify-center px-[150px]  py-[168px]">
           <form
-            onSubmit={handleSubmit}
+            onSubmit={newPass}
             className="w-[400px] flex flex-col justify-center items-center p-[32px] gap-12"
           >
             <h5 className="text-3xl font-bold">Шинэ нууц үг зохиох </h5>

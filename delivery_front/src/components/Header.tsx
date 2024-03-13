@@ -4,7 +4,13 @@ import { AccountIcon } from "./icon/AccountIcon";
 import { PineconeLogo } from "./icon/PineconeLogo";
 import { SearchIcon } from "./icon/SearchIcon";
 
-export const Header = ({ loggedIn }: { loggedIn: boolean }) => {
+type loggedProp = { loggedIn: boolean | any };
+
+export const Header: React.FC<loggedProp> = ({
+  loggedIn,
+}: {
+  loggedIn: boolean;
+}) => {
   return (
     <header className="w-full flex items-center justify-between py-2 px-[150px]">
       <div className="flex gap-6">
