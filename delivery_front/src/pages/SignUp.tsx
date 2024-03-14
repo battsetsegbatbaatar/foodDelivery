@@ -64,7 +64,7 @@ export default function Home() {
 
   return (
     <>
-      <Header />
+      <Header loggedIn={null} />
       {visible && (
         <div className="flex justify-end pt-12 iteams-center">
           <div

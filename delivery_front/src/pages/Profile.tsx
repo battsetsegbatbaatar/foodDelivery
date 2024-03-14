@@ -53,7 +53,7 @@ export default function Home() {
   };
   return (
     <>
-      <Header />
+      <Header loggedIn={null} />
       <main className="w-full flex flex-col gap-8 justify-center px-[150px] items-center py-[168px]">
         <div className=" App relative">
           <img

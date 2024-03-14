@@ -44,9 +44,6 @@ app.post(
   }
 );
 
-app.get("/", (req: express.Request, res: express.Response) => {
-  res.send("Express on Vercel");
-});
 app.listen(PORT, () => {
   console.log("application running at: http://localhost:" + PORT);
 });

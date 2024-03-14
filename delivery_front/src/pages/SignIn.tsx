@@ -6,51 +6,45 @@ import { CheckIcon } from "@/components/icon/CheckIcon";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const BASE_URL = "http://localhost:8080";
 
 export default function Home() {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
   const router = useRouter();
-  console.log(formData);
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  const handleChange = (e: any) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const clearForm = () => {
-    setFormData({
+  const formik = useFormik({
+    initialValues: {
       email: "",
       password: "",
-    });
-  };
-
-  const SignIn = async (e: any) => {
-    e.preventDefault();
-    console.log(formData);
-    try {
-      await axios.post(BASE_URL + "/user/signin", formData);
-
-      router.push("/");
-      clearForm();
-      alert("Success enter");
-      setLoggedIn(true);
-    } catch (error) {
-      console.log(error);
-      alert({ message: "Not enter" });
-      router.push("/#");
-      setError("И-мэйл эсвэл нууц үгээ оруулна уу");
-    }
-  };
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email("И-мэйл хаяг буруу байна.")
+        .required("Required"),
+      password: Yup.string()
+        .required("Required")
+        .min(8, "8 ба түүнээс дээш тэмдэгт байх ёстой !")
+        .max(20, "20 тэмдэгт буюу түүнээс бага байх ёстой !")
+        .required("Required"),
+    }),
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
+      try {
+        await axios.post(BASE_URL + "/user/signin", values);
+        router.push("/");
+        alert("Success enter");
+        resetForm();
+        setLoggedIn(true);
+      } catch (error) {
+        console.log(error);
+        alert({ message: "Not enter" });
+        router.push("/#");
+      }
+      setSubmitting(false);
+    },
+  });
 
   return (
     <>
@@ -58,11 +52,11 @@ export default function Home() {
 
       <main className="w-full flex justify-center px-[150px]  py-[168px]">
         <form
-          onSubmit={handleChange}
+          onSubmit={formik.handleSubmit}
           className="w-[400px] flex flex-col justify-center items-center p-[32px] gap-12"
         >
           <h5 className="text-3xl font-bold">Нэвтрэх</h5>
-          {error && <p className="text-red-500">{error}</p>}
+
           <div className="flex flex-col gap-2 w-[90%] justify-center">
             <label className="form-control w-full flex flex-col gap-1">
               <div className="label">
@@ -71,8 +65,9 @@ export default function Home() {
               <input
                 type="text"
                 name="email"
-                value={formData.email}
-                onChange={handleChange}
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 placeholder="Имэйл хаягаа оруулна уу"
                 className="input input-bordered w-full border py-2 px-4 rounded bg-[#F7F7F8]"
               />
@@ -84,8 +79,9 @@ export default function Home() {
               <input
                 type="password"
                 name="password"
-                value={formData.password}
-                onChange={handleChange}
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 placeholder="Нууц үг"
                 className="input input-bordered w-full border py-2 px-4 rounded bg-[#F7F7F8]"
               />
@@ -97,13 +93,12 @@ export default function Home() {
             </label>
           </div>
           <div className="flex flex-col w-[340px] items-center justify-center gap-[32px]">
-            <a
-              onClick={SignIn}
+            <button
               type="submit"
               className="btn py-2 px-4 w-[90%] text-center rounded text-white bg-[#18BA51] focus:bg-[#EEEFF2]"
             >
               Нэвтрэх
-            </a>
+            </button>
             <p>Эсвэл</p>
             <a
               href="/SignUp"

@@ -34,6 +34,7 @@ export const forgetPass = async (req: Request, res: Response) => {
     Verify[user.email] = otp;
     console.log("Message sent: %s", info.messageId);
     res.status(200).json({ message: "Email sent successfully", otp });
+    ``;
   } catch (error) {
     console.error("Error occurred:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -42,14 +43,16 @@ export const forgetPass = async (req: Request, res: Response) => {
 
 export const verifyCode = async (req: Request, res: Response) => {
   const { email, code } = req.body;
-  console.log(email, code);
-  console.log(Verify);
+
+  interface otp {
+    [key: string]: number;
+  }
+  let otp: otp = {};
+  otp[email] = code;
+
   try {
-    if (email !== Verify[email]) {
-      return res.status(400).json({ message: "User not found" });
-    }
-    if (code !== Verify.key) {
-      return res.status(400).json({ message: "Invalid verification code" });
+    if (otp !== Verify) {
+      return res.status(400).json({ message: "User not email and code match" });
     }
 
     Verify = {};

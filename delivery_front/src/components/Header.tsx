@@ -6,18 +6,14 @@ import { SearchIcon } from "./icon/SearchIcon";
 
 type loggedProp = { loggedIn: boolean | any };
 
-export const Header: React.FC<loggedProp> = ({
-  loggedIn,
-}: {
-  loggedIn: boolean;
-}) => {
+export const Header: React.FC<loggedProp> = ({ loggedIn }) => {
   return (
-    <header className="w-full flex items-center justify-between py-2 px-[150px]">
+    <header className="w-full flex items-center justify-between py-2 px-[200px]">
       <div className="flex gap-6">
         <a href="#">
           <PineconeLogo />
         </a>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-4 items-center">
           <a
             href="./"
             className="cursor-pointer hover:text-[#18BA51] font-bold text-sm"
@@ -43,7 +39,7 @@ export const Header: React.FC<loggedProp> = ({
           <SearchIcon />
           <input type="text" placeholder="Search"></input>
         </div>
-        {loggedIn ? (
+        {loggedIn === true ? (
           <>
             <div className="flex gap-2 px-4 py-2 cursor-pointer items-center justify-center hover:text-[#18BA51]">
               <Vector />

@@ -35,7 +35,9 @@ export const CategoryCard: React.FC<nameProp> = ({ name }) => {
           <h5 className="font-bold text-2xl leading-8">{name}</h5>
         </div>
         <div className="flex items-center gap-[10px]">
-          <p className="text-[#18BA51] text-sm">Бүгдийг харах</p>
+          <a href="/Menu" className="text-[#18BA51] text-sm">
+            Бүгдийг харах
+          </a>
           <ArrowIcon />
         </div>
       </div>
