@@ -6,7 +6,7 @@ import {
   userRef,
   userUpdate,
 } from "../controllers/userController";
-import { forgetPass, verifyCode } from "../controllers/nodemailer";
+import { forgetPass, updatePass, verifyCode } from "../controllers/nodemailer";
 
 export const router = Router();
 
@@ -15,8 +15,9 @@ router.route("/signUp").post(singUp);
 router.route("/signIn").post(singIn);
 
 // code sergeeh heseg
-router.route("/forgetpass").post(forgetPass);
+router.route("/forgetPass").post(forgetPass);
 router.route("/verifyCode").post(verifyCode);
+router.route("/update").post(updatePass);
 
 // hereglegchiih profile heseg
 router.route("/user").get(userRef);

@@ -1,6 +1,7 @@
 import * as nodemailer from "nodemailer";
 import { Request, Response } from "express";
 import { userModel } from "../models/userModel";
+import bcrypt from "bcrypt";
 
 interface Verify {
   [key: string]: number;
@@ -43,15 +44,11 @@ export const forgetPass = async (req: Request, res: Response) => {
 
 export const verifyCode = async (req: Request, res: Response) => {
   const { email, code } = req.body;
-
-  interface otp {
-    [key: string]: number;
-  }
-  let otp: otp = {};
-  otp[email] = code;
-
   try {
-    if (otp !== Verify) {
+    if (!email) {
+      return res.status(400).json({ message: "User not email" });
+    }
+    if (code !== Verify[email]) {
       return res.status(400).json({ message: "User not email and code match" });
     }
 
@@ -61,5 +58,24 @@ export const verifyCode = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error occurred:", error);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const updatePass = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+
+  try {
+    if (!email) {
+      return res.status(400).json({ message: "User not email" });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await userModel.findOneAndUpdate(
+      { email },
+      { $set: { password: hashedPassword } }
+    );
+    return res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error("Error updating password:", error);
+    return res.status(500).json({ message: "Failed to update password" });
   }
 };
